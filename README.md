@@ -31,6 +31,12 @@ Les journaux du dépôt sont publics : ils ne montrent jamais le jeton ni la ré
 gh workflow run veille.yml -R Axosss/kardplay-veille
 ```
 
+Essai des secrets (un message de test, l'état ne bouge pas) :
+
+```
+gh workflow run veille.yml -R Axosss/kardplay-veille -f essai=true
+```
+
 ## La règle des 60 jours
 
 Dans un dépôt public, GitHub coupe les tâches planifiées après 60 jours sans activité.

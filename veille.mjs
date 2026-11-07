@@ -240,6 +240,12 @@ if (lanceDirect) {
   if (!process.env.TELEGRAM_JETON || !process.env.TELEGRAM_CHAT) {
     console.log('secrets Telegram absents : aucun message ne pourra partir');
   }
+  if (process.argv.includes('--essai')) {
+    // Essai lancé à la main : un message de test, sans sonder ni toucher à l'état.
+    const envoye = await envoyerTelegram('Essai de la veille de Kardplay : les messages arrivent bien.');
+    console.log(envoye ? 'essai envoyé' : 'essai raté');
+    process.exit(envoye ? 0 : 1);
+  }
   await passage({
     lireEtat: lireEtatFichier,
     sonde: () => sonder(),
