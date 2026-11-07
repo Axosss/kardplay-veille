@@ -1,0 +1,48 @@
+name: veille
+
+on:
+  schedule:
+    # Toutes les 5 minutes, décalé de l'heure pile (heures chargées chez GitHub).
+    - cron: '2-59/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Un passage à la fois : le suivant attend la fin du précédent.
+concurrency:
+  group: veille
+  cancel-in-progress: false
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Sonder le site
+        run: node veille.mjs
+        env:
+          TELEGRAM_JETON: ${{ secrets.TELEGRAM_JETON }}
+          TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+
+      # Un push fait avec le jeton de la tâche ne relance pas de tâche,
+      # et ce workflow n'écoute pas les push.
+      - name: Commit de l'état s'il a changé
+        run: |
+          if [ -z "$(git status --porcelain -- etat.json)" ]; then
+            echo "état inchangé"
+            exit 0
+          fi
+          git config user.name "veille"
+          git config user.email "veille@users.noreply.github.com"
+          git add etat.json
+          git commit -q -m "veille : état [skip ci]"
+          git pull -q --rebase
+          git push -q
+          echo "état commité"

@@ -1,0 +1,11 @@
+{
+  "name": "kardplay-veille",
+  "private": true,
+  "description": "Veille de kardplay.com : alerte Telegram quand le site ne répond plus.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
